@@ -46,6 +46,9 @@ public class StrafeDrive extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private DcMotor leftSlide = null;
+    private DcMotor rightSlide = null;
+
     @Override
     public void runOpMode() {
 
@@ -56,6 +59,9 @@ public class StrafeDrive extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
+        leftSlide = hardwareMap.get(DcMotor.class, "left_slide");
+        rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
+
         // Most robots need the motors on one side to be reversed to drive forward.
         // When you first test your robot, push the left joystick forward
         // and flip the direction ( FORWARD <-> REVERSE ) of any wheel that runs backwards
@@ -63,6 +69,9 @@ public class StrafeDrive extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        leftSlide.setDirection(DcMotor.Direction.FORWARD);
+        rightSlide.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -73,6 +82,14 @@ public class StrafeDrive extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            if (gamepad1.dpad_up) {
+                leftSlide.setPower(1f);
+                rightSlide.setPower(1f);
+            } else if (gamepad1.dpad_down) {
+                leftSlide.setPower(-1f);
+                rightSlide.setPower(-1f);
+            }
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
