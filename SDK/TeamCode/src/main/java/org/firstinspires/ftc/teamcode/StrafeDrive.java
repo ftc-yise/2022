@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Strafer go brrrr", group="Linear Opmode")
@@ -49,6 +50,10 @@ public class StrafeDrive extends LinearOpMode {
     private DcMotor leftSlide = null;
     private DcMotor rightSlide = null;
 
+    private Servo coneGrabber = null;
+
+    public float speedMultiplier = 1;
+
     @Override
     public void runOpMode() {
 
@@ -62,6 +67,8 @@ public class StrafeDrive extends LinearOpMode {
         leftSlide = hardwareMap.get(DcMotor.class, "left_slide");
         rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
 
+        coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
+;
         // Most robots need the motors on one side to be reversed to drive forward.
         // When you first test your robot, push the left joystick forward
         // and flip the direction ( FORWARD <-> REVERSE ) of any wheel that runs backwards
@@ -73,6 +80,11 @@ public class StrafeDrive extends LinearOpMode {
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
         rightSlide.setDirection(DcMotor.Direction.FORWARD);
 
+        /*leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -82,14 +94,34 @@ public class StrafeDrive extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            //Manual slide
             if (gamepad1.dpad_up) {
                 leftSlide.setPower(1f);
                 rightSlide.setPower(1f);
             } else if (gamepad1.dpad_down) {
                 leftSlide.setPower(-1f);
                 rightSlide.setPower(-1f);
+            } else {
+                leftSlide.setPower(0.05);
+                rightSlide.setPower(0.05);
             }
+
+            if (gamepad1.dpad_up) {
+                leftSlide.setTargetPosition(2820);
+                rightSlide.setTargetPosition(2820);
+                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftSlide.setPower(1.0);
+                rightSlide.setPower(1.0);
+            } else if (gamepad1.dpad_down) {
+                leftSlide.setTargetPosition(0);
+                rightSlide.setTargetPosition(0);
+                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftSlide.setPower(1.0);
+                rightSlide.setPower(1.0);
+            }
+
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -117,28 +149,23 @@ public class StrafeDrive extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
+            if (gamepad1.a) {
+                coneGrabber.setPosition(Servo.MIN_POSITION);
+            } else if (gamepad1.b) {
+                coneGrabber.setPosition(Servo.MAX_POSITION);
+            }
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            if (gamepad1.y && (speedMultiplier == 1)) {
+                speedMultiplier = 0.35f;
+            } else if (gamepad1.y && (speedMultiplier == 0.35f)){
+                speedMultiplier = 1f;
+            }
+
+            leftFrontDrive.setPower(leftFrontPower * speedMultiplier);
+            rightFrontDrive.setPower(rightFrontPower * speedMultiplier);
+            leftBackDrive.setPower(leftBackPower * speedMultiplier);
+            rightBackDrive.setPower(rightBackPower * speedMultiplier);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

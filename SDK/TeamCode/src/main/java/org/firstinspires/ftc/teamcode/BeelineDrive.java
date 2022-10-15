@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -47,8 +48,10 @@ public class BeelineDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
 
+    float speedMultiplier = 1;
+
     @Override
-    public void runOpMode() {
+    public void runOpMode(){
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -77,19 +80,71 @@ public class BeelineDrive extends LinearOpMode {
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
             double rightPower;
+            double drive;
+            double turn;
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
+            drive = -gamepad1.left_stick_y;
+            turn = gamepad1.right_stick_x;
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-            // Send calculated power to wheels
-            leftFrontDrive.setPower(leftPower);
-            rightFrontDrive.setPower(rightPower);
-            leftBackDrive.setPower(leftPower);
-            rightBackDrive.setPower(rightPower);
+            if (gamepad1.a && (speedMultiplier == 1)) {
+                speedMultiplier = 0.35f;
+            } else if (gamepad1.a && (speedMultiplier == 0.35f)){
+                speedMultiplier = 1f;
+            }
+
+            if (gamepad2.y){
+                leftPower=-leftPower;
+            }
+            if (gamepad2.x){
+                rightPower=-rightPower;
+            }
+            if (gamepad2.b){
+               leftPower = -leftPower;
+               rightPower = -rightPower;
+            }
+            if (gamepad1.right_bumper){
+                terminateOpModeNow();
+            }
+
+            if (gamepad2.a) {
+                terminateOpModeNow();
+            }
+
+            /*if (gamepad2.right_trigger > .75 && (speedMultiplier == 1)) {
+                speedMultiplier = 0.15f;
+            } else if (gamepad1.a && (speedMultiplier == 0.15f)){
+                speedMultiplier = 1f;
+            }*/
+            if (gamepad2.right_bumper){
+                leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            }
+
+            if (gamepad2.left_bumper){
+                leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            }
+            if (gamepad2.start && (speedMultiplier == 1)) {
+                speedMultiplier = 0f;
+            } else if (gamepad1.back && (speedMultiplier == 0f)){
+                speedMultiplier = .5f;
+            }
+
+
+
+
+            leftFrontDrive.setPower(leftPower * speedMultiplier);
+            rightFrontDrive.setPower(rightPower * speedMultiplier);
+            leftBackDrive.setPower(leftPower * speedMultiplier);
+            rightBackDrive.setPower(rightPower * speedMultiplier);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
