@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -36,6 +38,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name="Strafer go brrrr", group="Linear Opmode")
 public class StrafeDrive extends LinearOpMode {
@@ -51,6 +55,7 @@ public class StrafeDrive extends LinearOpMode {
     private DcMotor rightSlide = null;
 
     private Servo coneGrabber = null;
+    private Rev2mDistanceSensor distanceSensor = null;
 
     public float speedMultiplier = 1;
 
@@ -68,6 +73,7 @@ public class StrafeDrive extends LinearOpMode {
         rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
 
         coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
+        distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor");
 ;
         // Most robots need the motors on one side to be reversed to drive forward.
         // When you first test your robot, push the left joystick forward
@@ -79,6 +85,9 @@ public class StrafeDrive extends LinearOpMode {
 
         leftSlide.setDirection(DcMotor.Direction.FORWARD);
         rightSlide.setDirection(DcMotor.Direction.FORWARD);
+
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         /*leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -95,32 +104,82 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             //Manual slide
-            if (gamepad1.dpad_up) {
-                leftSlide.setPower(1f);
-                rightSlide.setPower(1f);
-            } else if (gamepad1.dpad_down) {
+            /*if (gamepad1.dpad_up) {
                 leftSlide.setPower(-1f);
                 rightSlide.setPower(-1f);
+            } else if (gamepad1.dpad_down) {
+                leftSlide.setPower(1f);
+                rightSlide.setPower(1f);
             } else {
                 leftSlide.setPower(0.05);
                 rightSlide.setPower(0.05);
-            }
+            }*/
 
-            if (gamepad1.dpad_up) {
-                leftSlide.setTargetPosition(2820);
-                rightSlide.setTargetPosition(2820);
+            //Encoder slide
+            if (gamepad1.dpad_up /*|| gamepad2.dpad_up*/) {
+                leftSlide.setTargetPosition(-7400);
+                rightSlide.setTargetPosition(-7400);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1.0);
-                rightSlide.setPower(1.0);
-            } else if (gamepad1.dpad_down) {
+                leftSlide.setPower(1);
+                rightSlide.setPower(1);
+            } else if (gamepad1.dpad_down /*|| gamepad2.dpad_down*/) {
                 leftSlide.setTargetPosition(0);
                 rightSlide.setTargetPosition(0);
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1.0);
-                rightSlide.setPower(1.0);
+                leftSlide.setPower(1);
+                rightSlide.setPower(1);
+            } else if (gamepad1.dpad_right /*|| gamepad2.dpad_right*/) {
+                leftSlide.setTargetPosition(-3400);
+                rightSlide.setTargetPosition(-3400);
+                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftSlide.setPower(1);
+                rightSlide.setPower(1);
+            } else if (gamepad1.dpad_left /*|| gamepad2.dpad_left*/) {
+                leftSlide.setTargetPosition(-5400);
+                rightSlide.setTargetPosition(-5400);
+                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftSlide.setPower(1);
+                rightSlide.setPower(1);
             }
+
+            if (!leftSlide.isBusy() || !rightSlide.isBusy()) {
+                //stop the slide and keep it from holding position
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                leftSlide.setPower(0.0);
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setPower(0.0);
+            }
+
+            if (distanceSensor.getDistance(DistanceUnit.INCH) < 2) {
+                telemetry.addLine("Personal space my dude");
+            } else {
+                telemetry.addLine("Get closer nerd");
+            }
+
+
+           /* if (distanceSensor.getDistance(DistanceUnit.INCH) > 2.69 && <3.01) {
+                coneGrabber.setPosition(Servo.MIN_POSITION);
+
+            }
+            else if(distanceSensor.getDistance(DistanceUnit.INCH) > 3 && <5 ){
+                leftFrontDrive.setPower(.5f);
+                leftBackDrive.setPower(.5f);
+                rightFrontDrive.setPower(.5f);
+                rightBackDrive.setPower(.5f);
+
+            }
+            else if(distanceSensor.getDistance(DistanceUnit.INCH) < 3 ){
+            leftFrontDrive.setPower(-.5f);
+                leftBackDrive.setPower(-.5f);
+                rightFrontDrive.setPower(-.5f);
+                rightBackDrive.setPower(-.5f);
+            }*/
+
+
 
             double max;
 
@@ -149,9 +208,9 @@ public class StrafeDrive extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-            if (gamepad1.a) {
+            if (gamepad1.a || gamepad2.a) {
                 coneGrabber.setPosition(Servo.MIN_POSITION);
-            } else if (gamepad1.b) {
+            } else if (gamepad1.b || gamepad2.b) {
                 coneGrabber.setPosition(Servo.MAX_POSITION);
             }
 
@@ -169,8 +228,10 @@ public class StrafeDrive extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("LHeight: ", leftSlide.getCurrentPosition());
+            telemetry.addData("RHeight: ", rightSlide.getCurrentPosition());
             telemetry.update();
         }
     }}

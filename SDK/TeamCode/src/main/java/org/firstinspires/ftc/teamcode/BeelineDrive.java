@@ -96,6 +96,9 @@ public class BeelineDrive extends LinearOpMode {
                 speedMultiplier = 1f;
             }
 
+            if (gamepad1.right_trigger > .75)
+
+
             if (gamepad2.y){
                 leftPower=-leftPower;
             }
