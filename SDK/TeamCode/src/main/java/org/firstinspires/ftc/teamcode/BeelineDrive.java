@@ -90,59 +90,11 @@ public class BeelineDrive extends LinearOpMode {
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-            if (gamepad1.a && (speedMultiplier == 1)) {
-                speedMultiplier = 0.35f;
-            } else if (gamepad1.a && (speedMultiplier == 0.35f)){
+            if (gamepad1.y && (speedMultiplier == 1)) {
+                speedMultiplier = 0.5f;
+            } else if (gamepad1.y && (speedMultiplier == 0.5f)){
                 speedMultiplier = 1f;
             }
-
-            if (gamepad1.right_trigger > .75)
-
-
-            if (gamepad2.y){
-                leftPower=-leftPower;
-            }
-            if (gamepad2.x){
-                rightPower=-rightPower;
-            }
-            if (gamepad2.b){
-               leftPower = -leftPower;
-               rightPower = -rightPower;
-            }
-            if (gamepad1.right_bumper){
-                terminateOpModeNow();
-            }
-
-            if (gamepad2.a) {
-                terminateOpModeNow();
-            }
-
-            /*if (gamepad2.right_trigger > .75 && (speedMultiplier == 1)) {
-                speedMultiplier = 0.15f;
-            } else if (gamepad1.a && (speedMultiplier == 0.15f)){
-                speedMultiplier = 1f;
-            }*/
-            if (gamepad2.right_bumper){
-                leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-                rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-                rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-            }
-
-            if (gamepad2.left_bumper){
-                leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-                rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-                rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-            }
-            if (gamepad2.start && (speedMultiplier == 1)) {
-                speedMultiplier = 0f;
-            } else if (gamepad1.back && (speedMultiplier == 0f)){
-                speedMultiplier = .5f;
-            }
-
-
-
 
             leftFrontDrive.setPower(leftPower * speedMultiplier);
             rightFrontDrive.setPower(rightPower * speedMultiplier);
