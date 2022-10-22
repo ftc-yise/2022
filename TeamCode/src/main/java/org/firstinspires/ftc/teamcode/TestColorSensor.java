@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -41,8 +40,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="Strafe drive", group="Linear Opmode")
-public class StrafeDrive extends LinearOpMode {
+@TeleOp(name="Color sensor", group="Linear Opmode")
+public class TestColorSensor extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -50,14 +49,15 @@ public class StrafeDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
-    private DcMotor leftSlide = null;
-    private DcMotor rightSlide = null;
-
-    private Servo coneGrabber = null;
     private RevColorSensorV3 colorSensor = null;
 
+    private Rev2mDistanceSensor distanceSensorRight = null;
+    private Rev2mDistanceSensor distanceSensorLeft = null;
+
     public float speedMultiplier = 1;
+    /*/
+    public float strafe right = leftFrontDrive.setPower(1 * speedMultiplier); && rightBackDrive.setPower(1 * speedMultiplier); && leftBackDrive.setPower(-1 * speedMultiplier); && rightFrontDrive.setPower(-1 * speedMultiplier);
+     */
 
     @Override
     public void runOpMode() {
@@ -68,30 +68,19 @@ public class StrafeDrive extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
-        leftSlide = hardwareMap.get(DcMotor.class, "left_slide");
-        rightSlide = hardwareMap.get(DcMotor.class, "right_slide");
-
-        coneGrabber = hardwareMap.get(Servo.class, "cone_grabber");
         colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
         // Most robots need the motors on one side to be reversed to drive forward.
         // When you first test your robot, push the left joystick forward
         // and flip the direction ( FORWARD <-> REVERSE ) of any wheel that runs backwards
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        leftSlide.setDirection(DcMotor.Direction.FORWARD);
-        rightSlide.setDirection(DcMotor.Direction.FORWARD);
+        distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
+        distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
 
-        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        /*leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);*/
+        boolean detected = false;
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -102,63 +91,16 @@ public class StrafeDrive extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            //Manual slide
-            /*if (gamepad1.dpad_up) {
-                leftSlide.setPower(-1f);
-                rightSlide.setPower(-1f);
-            } else if (gamepad1.dpad_down) {
-                leftSlide.setPower(1f);
-                rightSlide.setPower(1f);
-            } else {
-                leftSlide.setPower(0.05);
-                rightSlide.setPower(0.05);
-            }*/
-
-            //Encoder slide
-            if (gamepad1.dpad_up /*|| gamepad2.dpad_up*/) {
-                leftSlide.setTargetPosition(-7400);
-                rightSlide.setTargetPosition(-7400);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
-            } else if (gamepad1.dpad_down /*|| gamepad2.dpad_down*/) {
-                leftSlide.setTargetPosition(0);
-                rightSlide.setTargetPosition(0);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
-            } else if (gamepad1.dpad_right /*|| gamepad2.dpad_right*/) {
-                leftSlide.setTargetPosition(-3400);
-                rightSlide.setTargetPosition(-3400);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
-            } else if (gamepad1.dpad_left /*|| gamepad2.dpad_left*/) {
-                leftSlide.setTargetPosition(-5400);
-                rightSlide.setTargetPosition(-5400);
-                leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftSlide.setPower(1);
-                rightSlide.setPower(1);
-            }
-
-            if (!leftSlide.isBusy() || !rightSlide.isBusy()) {
-                //stop the slide and keep it from holding position
-                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftSlide.setPower(0.0);
-                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightSlide.setPower(0.0);
-            }
-
             double max;
+            double threshold = 1;
+
+            double distanceRight = distanceSensorRight.getDistance(DistanceUnit.INCH);
+            double distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.INCH);
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double vertical   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double vertical   = gamepad1.right_stick_x;  // Note: pushing stick forward gives negative value
             double horizontal =  gamepad1.left_stick_x;
-            double turn     =  gamepad1.right_stick_x;
+            double turn     =  -gamepad1.left_stick_y;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -180,12 +122,6 @@ public class StrafeDrive extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-            if (gamepad1.a || gamepad2.a) {
-                coneGrabber.setPosition(Servo.MIN_POSITION);
-            } else if (gamepad1.b || gamepad2.b) {
-                coneGrabber.setPosition(Servo.MAX_POSITION);
-            }
-
             // Send calculated power to wheels
             if (gamepad1.y && (speedMultiplier == 1)) {
                 speedMultiplier = 0.35f;
@@ -198,6 +134,49 @@ public class StrafeDrive extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower * speedMultiplier);
             rightBackDrive.setPower(rightBackPower * speedMultiplier);
 
+            /*if (distanceRight < 7 || distanceLeft < 7) {
+                if (Math.abs(distanceRight - distanceLeft) < threshold) {
+                    leftFrontDrive.setPower(0);
+                    rightBackDrive.setPower(0);
+                    leftBackDrive.setPower(0);
+                    rightFrontDrive.setPower(0);
+                } else if (distanceRight < distanceLeft) {
+                    //Strafe right
+                    leftFrontDrive.setPower(0.2);
+                    rightBackDrive.setPower(0.2);
+                    leftBackDrive.setPower(-0.2);
+                    rightFrontDrive.setPower(-0.2);
+                } else if (distanceLeft < distanceRight){
+                    //Strafe left
+                    leftFrontDrive.setPower(-0.2);
+                    rightBackDrive.setPower(-0.2);
+                    leftBackDrive.setPower(0.2);
+                    rightFrontDrive.setPower(0.2);
+                } else {
+                    leftFrontDrive.setPower(0);
+                    rightBackDrive.setPower(0);
+                    leftBackDrive.setPower(0);
+                    rightFrontDrive.setPower(0);
+                }
+            }*/
+
+            if (distanceRight < 7 && distanceLeft < 7) {
+                leftFrontDrive.setPower(0);
+                rightBackDrive.setPower(0);
+                leftBackDrive.setPower(0);
+                rightFrontDrive.setPower(0);
+            } else if (distanceRight < 7) {
+                leftFrontDrive.setPower(-0.2);
+                rightBackDrive.setPower(-0.2);
+                leftBackDrive.setPower(0.2);
+                rightFrontDrive.setPower(0.2);
+            } else if (distanceLeft < 7) {
+                leftFrontDrive.setPower(0.2);
+                rightBackDrive.setPower(0.2);
+                leftBackDrive.setPower(-0.2);
+                rightFrontDrive.setPower(-0.2);
+            }
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
@@ -205,6 +184,8 @@ public class StrafeDrive extends LinearOpMode {
             telemetry.addData("Red: ", colorSensor.red());
             telemetry.addData("Green: ", colorSensor.green());
             telemetry.addData("Blue: ", colorSensor.blue());
+            telemetry.addData("Distance right: ", distanceSensorRight.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Distance left ", distanceSensorLeft.getDistance(DistanceUnit.INCH));
             telemetry.update();
         }
     }}
