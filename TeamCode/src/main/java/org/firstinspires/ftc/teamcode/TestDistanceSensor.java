@@ -40,8 +40,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="Color sensor", group="Linear Opmode")
-public class TestColorSensor extends LinearOpMode {
+@TeleOp(name="Distance sensor", group="Linear Opmode")
+public class TestDistanceSensor extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -49,15 +49,12 @@ public class TestColorSensor extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private RevColorSensorV3 colorSensor = null;
 
     private Rev2mDistanceSensor distanceSensorRight = null;
     private Rev2mDistanceSensor distanceSensorLeft = null;
+    private Rev2mDistanceSensor distanceSensorDown = null;
 
     public float speedMultiplier = 1;
-    /*/
-    public float strafe right = leftFrontDrive.setPower(1 * speedMultiplier); && rightBackDrive.setPower(1 * speedMultiplier); && leftBackDrive.setPower(-1 * speedMultiplier); && rightFrontDrive.setPower(-1 * speedMultiplier);
-     */
 
     @Override
     public void runOpMode() {
@@ -68,7 +65,6 @@ public class TestColorSensor extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        colorSensor = hardwareMap.get(RevColorSensorV3.class, "color_sensor");
         // Most robots need the motors on one side to be reversed to drive forward.
         // When you first test your robot, push the left joystick forward
         // and flip the direction ( FORWARD <-> REVERSE ) of any wheel that runs backwards
@@ -79,8 +75,7 @@ public class TestColorSensor extends LinearOpMode {
 
         distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
         distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
-
-        boolean detected = false;
+        distanceSensorDown = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_down");
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -92,10 +87,9 @@ public class TestColorSensor extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
-            double threshold = 1;
 
-            double distanceRight = distanceSensorRight.getDistance(DistanceUnit.INCH);
-            double distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.INCH);
+            double distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
+            double distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double vertical   = gamepad1.right_stick_x;  // Note: pushing stick forward gives negative value
@@ -134,58 +128,36 @@ public class TestColorSensor extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower * speedMultiplier);
             rightBackDrive.setPower(rightBackPower * speedMultiplier);
 
-            /*if (distanceRight < 7 || distanceLeft < 7) {
-                if (Math.abs(distanceRight - distanceLeft) < threshold) {
+            if (gamepad1.left_trigger >= 0.8) {
+                if (distanceLeft < 19.5 && distanceRight < 19.5) {
                     leftFrontDrive.setPower(0);
                     rightBackDrive.setPower(0);
                     leftBackDrive.setPower(0);
                     rightFrontDrive.setPower(0);
-                } else if (distanceRight < distanceLeft) {
-                    //Strafe right
-                    leftFrontDrive.setPower(0.2);
-                    rightBackDrive.setPower(0.2);
-                    leftBackDrive.setPower(-0.2);
-                    rightFrontDrive.setPower(-0.2);
-                } else if (distanceLeft < distanceRight){
-                    //Strafe left
+                } else if (distanceRight < 19.5) {
                     leftFrontDrive.setPower(-0.2);
                     rightBackDrive.setPower(-0.2);
                     leftBackDrive.setPower(0.2);
                     rightFrontDrive.setPower(0.2);
-                } else {
-                    leftFrontDrive.setPower(0);
-                    rightBackDrive.setPower(0);
-                    leftBackDrive.setPower(0);
-                    rightFrontDrive.setPower(0);
+                } else if (distanceLeft < 19.5) {
+                    leftFrontDrive.setPower(0.2);
+                    rightBackDrive.setPower(0.2);
+                    leftBackDrive.setPower(-0.2);
+                    rightFrontDrive.setPower(-0.2);
+                }else if ((distanceRight < 45 && distanceRight > 19.5) || (distanceLeft < 45 && distanceLeft > 19.5)) {
+                    leftFrontDrive.setPower(0.4);
+                    rightBackDrive.setPower(-0.4);
+                    leftBackDrive.setPower(0.4);
+                    rightFrontDrive.setPower(-0.4);
                 }
-            }*/
-
-            if (distanceRight < 7 && distanceLeft < 7) {
-                leftFrontDrive.setPower(0);
-                rightBackDrive.setPower(0);
-                leftBackDrive.setPower(0);
-                rightFrontDrive.setPower(0);
-            } else if (distanceRight < 7) {
-                leftFrontDrive.setPower(-0.2);
-                rightBackDrive.setPower(-0.2);
-                leftBackDrive.setPower(0.2);
-                rightFrontDrive.setPower(0.2);
-            } else if (distanceLeft < 7) {
-                leftFrontDrive.setPower(0.2);
-                rightBackDrive.setPower(0.2);
-                leftBackDrive.setPower(-0.2);
-                rightFrontDrive.setPower(-0.2);
             }
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Red: ", colorSensor.red());
-            telemetry.addData("Green: ", colorSensor.green());
-            telemetry.addData("Blue: ", colorSensor.blue());
-            telemetry.addData("Distance right: ", distanceSensorRight.getDistance(DistanceUnit.INCH));
-            telemetry.addData("Distance left ", distanceSensorLeft.getDistance(DistanceUnit.INCH));
+            //telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Distance down: ", distanceSensorDown.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance right: ", distanceSensorRight.getDistance(DistanceUnit.CM));
+            telemetry.addData("Distance left ", distanceSensorLeft.getDistance(DistanceUnit.CM));
             telemetry.update();
         }
-    }}
+    }
+}
