@@ -52,7 +52,6 @@ public class TestDistanceSensor extends LinearOpMode {
 
     private Rev2mDistanceSensor distanceSensorRight = null;
     private Rev2mDistanceSensor distanceSensorLeft = null;
-    private Rev2mDistanceSensor distanceSensorDown = null;
 
     public float speedMultiplier = 1;
 
@@ -75,7 +74,6 @@ public class TestDistanceSensor extends LinearOpMode {
 
         distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
         distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
-        distanceSensorDown = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_down");
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -129,22 +127,22 @@ public class TestDistanceSensor extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower * speedMultiplier);
 
             if (gamepad1.left_trigger >= 0.8) {
-                if (distanceLeft < 19.5 && distanceRight < 19.5) {
+                if (distanceLeft < 20 && distanceRight < 20) {
                     leftFrontDrive.setPower(0);
                     rightBackDrive.setPower(0);
                     leftBackDrive.setPower(0);
                     rightFrontDrive.setPower(0);
-                } else if (distanceRight < 19.5) {
+                } else if (distanceRight < 20) {
                     leftFrontDrive.setPower(-0.2);
                     rightBackDrive.setPower(-0.2);
                     leftBackDrive.setPower(0.2);
                     rightFrontDrive.setPower(0.2);
-                } else if (distanceLeft < 19.5) {
+                } else if (distanceLeft < 20) {
                     leftFrontDrive.setPower(0.2);
                     rightBackDrive.setPower(0.2);
                     leftBackDrive.setPower(-0.2);
                     rightFrontDrive.setPower(-0.2);
-                }else if ((distanceRight < 45 && distanceRight > 19.5) || (distanceLeft < 45 && distanceLeft > 19.5)) {
+                }else if ((distanceRight < 45 && distanceRight > 20) || (distanceLeft < 45 && distanceLeft > 20)) {
                     leftFrontDrive.setPower(0.4);
                     rightBackDrive.setPower(-0.4);
                     leftBackDrive.setPower(0.4);
@@ -154,7 +152,6 @@ public class TestDistanceSensor extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             //telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Distance down: ", distanceSensorDown.getDistance(DistanceUnit.CM));
             telemetry.addData("Distance right: ", distanceSensorRight.getDistance(DistanceUnit.CM));
             telemetry.addData("Distance left ", distanceSensorLeft.getDistance(DistanceUnit.CM));
             telemetry.update();
