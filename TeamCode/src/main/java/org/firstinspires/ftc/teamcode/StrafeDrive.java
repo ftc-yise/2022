@@ -116,6 +116,10 @@ public class StrafeDrive extends LinearOpMode {
             double leftBackPower   = vertical - horizontal + turn;
             double rightBackPower  = vertical + horizontal - turn;
 
+            /*leftSlide.setPower(-gamepad2.left_stick_y);
+            rightSlide.setPower(-gamepad2.left_stick_y);*/
+             
+
             //Encoder slide
             if (gamepad1.dpad_up || gamepad2.dpad_up) {
                 leftSlide.setTargetPosition(2000);
