@@ -26,7 +26,7 @@
     <content url="file://$MODULE_DIR$/../../../FtcRobotController/src/testDebug" />
     <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="road-runner-quickstart-master.FtcRobotController.main" scope="TEST" />
+    <orderEntry type="module" module-name="2022.FtcRobotController.main" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.threeten:threetenbp:1.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.checkerframework:checker-qual:2.5.8" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.annotation:annotation:1.1.0" level="project" />
@@ -70,4 +70,5 @@
     <orderEntry type="library" scope="TEST" name="Gradle: org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.acmerobotics.dashboard:dashboard:0.4.6@aar" level="project" />
   </component>
+  <component name="TestModuleProperties" production-module="2022.FtcRobotController.main" />
 </module>

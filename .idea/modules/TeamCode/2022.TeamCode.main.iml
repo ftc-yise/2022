@@ -33,7 +33,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="road-runner-quickstart-master.FtcRobotController.main" />
+    <orderEntry type="module" module-name="2022.FtcRobotController.main" />
     <orderEntry type="library" name="Gradle: org.threeten:threetenbp:1.5.1" level="project" />
     <orderEntry type="library" name="Gradle: org.checkerframework:checker-qual:2.5.8" level="project" />
     <orderEntry type="library" name="Gradle: androidx.annotation:annotation:1.1.0" level="project" />
