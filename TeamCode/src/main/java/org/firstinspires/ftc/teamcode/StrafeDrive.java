@@ -259,7 +259,10 @@ public class StrafeDrive extends LinearOpMode {
                 //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
                 telemetry.addData("HeightL: ", leftSlide.getCurrentPosition());
                 telemetry.addData("HeightR: ", rightSlide.getCurrentPosition());
-                //telemetry.addData("Distance left: ", distanceLeft);
+                telemetry.addData("Left Encoder:", leftFrontDrive.getCurrentPosition());
+                telemetry.addData("Rear Encoder:", rightFrontDrive.getCurrentPosition());
+                telemetry.addData(" Right Encoder:", -rightBackDrive.getCurrentPosition());
+            //telemetry.addData("Distance left: ", distanceLeft);
                 //telemetry.addData("Distance right: ", distanceRight);
                 telemetry.update();
                 telemetry.addData("cone: ", cone);
