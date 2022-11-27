@@ -63,6 +63,8 @@ public class StrafeDrive extends LinearOpMode {
 
     public float cone = 1;  // variable used to set the value for the cone heights and incremental down values
 
+    public boolean leftBumperWasPressede = false;
+
     public boolean canSwitchModes = true;
 
     @Override
@@ -159,16 +161,17 @@ public class StrafeDrive extends LinearOpMode {
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
-            } if (cone < 1 ) {  //checks to see if the arm is already at zero and doesn't try to move down anymore
+            } if (cone < 0 ) {  //checks to see if the arm is already at zero and doesn't try to move down anymore
                 cone = 0;
-            }else if (gamepad2.left_bumper) {
-                cone = cone - 8;
-                leftSlide.setTargetPosition((int) (cone + 50));  //stack incrementally move arm down by 50 on each press
-                rightSlide.setTargetPosition((int) (cone + 50));
+            }else if ((gamepad2.left_bumper && leftBumperWasPressede) == false) {
+                cone = cone - 15;
+                leftSlide.setTargetPosition((int) (cone));  //stack incrementally move arm down by 50 on each press
+                rightSlide.setTargetPosition((int) (cone));
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
                 rightSlide.setPower(1);
+                leftBumperWasPressede=true;
             }else if (gamepad2.right_bumper) {
                 cone = 300;
                 leftSlide.setTargetPosition((int) (300));  //stack height for 5 cones
@@ -176,7 +179,10 @@ public class StrafeDrive extends LinearOpMode {
                 leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftSlide.setPower(1);
-                rightSlide.setPower(1); }
+                rightSlide.setPower(1);
+            }else if (gamepad2.left_bumper= false && leftBumperWasPressede == true){
+                leftBumperWasPressede=false;
+            }
 
 
 
@@ -261,8 +267,13 @@ public class StrafeDrive extends LinearOpMode {
                 telemetry.addData("HeightR: ", rightSlide.getCurrentPosition());
                 //telemetry.addData("Distance left: ", distanceLeft);
                 //telemetry.addData("Distance right: ", distanceRight);
-                telemetry.update();
+                telemetry.addData("Left Encoder:", leftFrontDrive.getCurrentPosition());
+                telemetry.addData("Rear Encoder:", rightFrontDrive.getCurrentPosition());
+                //telemetry.addData(" LeftBack Encoder:", leftBackDrive.getCurrentPosition()); //not being used
+                telemetry.addData(" Right Encoder:", -rightBackDrive.getCurrentPosition());
                 telemetry.addData("cone: ", cone);
+                telemetry.update();
+
             }
         }
     }
