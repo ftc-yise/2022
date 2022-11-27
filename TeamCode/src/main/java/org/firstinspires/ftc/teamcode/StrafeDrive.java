@@ -29,7 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+//import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -54,8 +54,8 @@ public class StrafeDrive extends LinearOpMode {
     private DcMotor leftSlide = null;
     private DcMotor rightSlide = null;
 
-    private Rev2mDistanceSensor distanceSensorRight = null;
-    private Rev2mDistanceSensor distanceSensorLeft = null;
+    //private Rev2mDistanceSensor distanceSensorRight = null;
+    //private Rev2mDistanceSensor distanceSensorLeft = null;
 
     private Servo coneGrabber = null;
 
@@ -91,8 +91,8 @@ public class StrafeDrive extends LinearOpMode {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
-        distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
+        //distanceSensorRight = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_right");
+        //distanceSensorLeft = hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor_left");
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -104,8 +104,8 @@ public class StrafeDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
-            double distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
-            double distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
+            //double distanceRight = distanceSensorRight.getDistance(DistanceUnit.CM);
+            //double distanceLeft = distanceSensorLeft.getDistance(DistanceUnit.CM);
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double vertical = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double horizontal = gamepad1.left_stick_x;
@@ -229,7 +229,7 @@ public class StrafeDrive extends LinearOpMode {
                 leftBackDrive.setPower(leftBackPower * speedMultiplier);
                 rightBackDrive.setPower(rightBackPower * speedMultiplier);
 
-                if (gamepad1.left_trigger >= 0.8) {
+                /*if (gamepad1.left_trigger >= 0.8) {  //CAUSING LAG AND WHEN DISCONNECTS IT STOPS THE CODE BRING THIS OUT TO ANOTHER CLASS AND ADD ERROR CODE HANDELING
                     if (distanceLeft < 20 && distanceRight < 20) {
                         leftFrontDrive.setPower(0);
                         rightBackDrive.setPower(0);
@@ -250,8 +250,8 @@ public class StrafeDrive extends LinearOpMode {
                         rightBackDrive.setPower(0.4);
                         leftBackDrive.setPower(0.4);
                         rightFrontDrive.setPower(0.4);
-                    }
-                }
+                    }*/
+                //}
 
                 // Show the elapsed game time and wheel power.
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -259,10 +259,10 @@ public class StrafeDrive extends LinearOpMode {
                 //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
                 telemetry.addData("HeightL: ", leftSlide.getCurrentPosition());
                 telemetry.addData("HeightR: ", rightSlide.getCurrentPosition());
-                telemetry.addData("Distance left: ", distanceLeft);
-                telemetry.addData("Distance right: ", distanceRight);
+                //telemetry.addData("Distance left: ", distanceLeft);
+                //telemetry.addData("Distance right: ", distanceRight);
                 telemetry.update();
-            telemetry.addData("cone: ", cone);
+                telemetry.addData("cone: ", cone);
             }
         }
     }
