@@ -4,7 +4,7 @@
             "outputFile": "org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-16:/values-land/values-land.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\sjwin\\.gradle\\caches\\transforms-3\\b5a8c5f6dcf747dc18435dd1788b010f\\transformed\\appcompat-1.2.0\\res\\values-land\\values-land.xml",
+                    "source": "/Users/mpd/.gradle/caches/transforms-3/b5a8c5f6dcf747dc18435dd1788b010f/transformed/appcompat-1.2.0/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",
